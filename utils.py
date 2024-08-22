@@ -30,9 +30,9 @@ class Style:
 @dataclass(frozen=True)
 class CommandList:
     quitting_commands = ["quit", "q"]
-    moving_commands = ["12", "13", "21", "23", "31", "33"]
+    moving_commands = ["12", "13", "21", "23", "31", "32"]
     help_commands = ["help", "h", "--help"]
-    commands_whitelist = quitting_commands + moving_commands + help_commands
+    whitelist = quitting_commands + moving_commands + help_commands
     error_message = (
         "command not valid; use [help] or [h] for the list of available commands"
     )
@@ -49,7 +49,7 @@ class Command(CommandList):
         self.command = input(f"{Style.set("  insert command:  ", Style.HIGHLIGHT)} ")
 
     def is_not_valid(self) -> bool:
-        return self.command and self.command not in self.commands_whitelist
+        return self.command and self.command not in self.whitelist
 
 
 class UI:
@@ -62,18 +62,20 @@ class UI:
         self.title = title + self.__center_space + Style.set(self.__copyright, Style.COPY, True)
         self.command = Command()
 
-    def clear(self, show_hanoi: bool = True):
+    def render(self, show_hanoi: bool = True):
         system("clear")
         print('\n\n\n')
         print(Style.set(self.title, Style.BOLD + Style.HEADER))
         if show_hanoi:
             print(f"\n{self.hanoi}\n")
 
-    def start(self, action: Callable[[Command, Hanoi], None]):
+    def run(self, action: Callable[[str, Hanoi], tuple[int, IndexError | None]]):
         while self.command.get() not in self.command.quitting_commands:
-            action(self.command, self.hanoi)
-            self.clear()
+            result, error = action(self.command.get(), self.hanoi)
+            self.render()
             if self.command.is_not_valid():
                 print(Style.set(f"{self.command.error_message}\n", Style.WARNING))
+            elif result == 1:
+                print(Style.set(f"ERROR: {error}!\n", Style.FAIL))
             self.command.input()
         system('clear')
