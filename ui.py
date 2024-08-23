@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from os import system
 from typing import Callable
 from hanoi import Hanoi
+from help import Help
 
 
 @dataclass(frozen=True)
@@ -10,6 +11,10 @@ class Layout:
     NUMBER_OF_LINES = 24
     X_PADDING = 7
     Y_PADDING = 3
+
+    @staticmethod
+    def px(span: str):
+        return Layout.X_PADDING * " " + span
 
 
 @dataclass(frozen=True)
@@ -31,7 +36,7 @@ class Style:
         stylized_message = style + message + Style.ENDC
         if inline:
             return stylized_message
-        return Layout.X_PADDING * " " + stylized_message
+        return Layout.px(stylized_message)
 
 
 @dataclass(frozen=True)
@@ -41,7 +46,7 @@ class CommandList:
     help_commands = ["help", "h", "--help"]
     whitelist = quitting_commands + moving_commands + help_commands
     error_message = (
-        "command not valid; use [help] or [h] for the list of available commands"
+        "COMMAND NOT VALID! use [help] or [h] for the list of available commands"
     )
 
 
@@ -50,7 +55,7 @@ class Command(CommandList):
         self.command = ""
 
     def get(self):
-        return self.command
+        return self.command.lower()
 
     def input(self):
         self.command = input(f"{Style.set("  insert command:  ", Style.HIGHLIGHT)} ")
@@ -82,7 +87,9 @@ class UI:
         while self.command.get() not in self.command.quitting_commands:
             result, error = action(self.command.get(), self.hanoi)
             self.render()
-            if self.command.is_not_valid():
+            if self.command.get() in self.command.help_commands:
+                print(Help.get_help())
+            elif self.command.is_not_valid():
                 print(Style.set(f"{self.command.error_message}\n", Style.WARNING))
             elif result == 1:
                 print(Style.set(f"ERROR: {error}!\n", Style.FAIL))
