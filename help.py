@@ -4,7 +4,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Help:
     HEADER = "----- AVAILABLE COMMANDS -----"
-    MOVE = "[i][j]\t: move a piece from tower i to tower j"
+    MOVE = "[i][j]\t: move a piece from rod i to rod j (e.g.: 13 -> from 1 to 3)"
     HELP = "help or h: show the list of available commands"
     QUIT = "quit or q: quit the game"
 
