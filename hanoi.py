@@ -16,7 +16,7 @@ class Hanoi:
         self.towers[to_tower - 1].append(piece)
 
     def __repr__(self) -> str:
-        from utils import Style
+        from ui import Style
 
         return "\n\n".join(
             Style.set(f"{index + 1}:", Style.OKCYAN) + f" {tower}"

@@ -1,5 +1,5 @@
 from hanoi import Hanoi
-from utils import Command, UI
+from ui import Command, UI
 
 
 def action(command: str, hanoi: Hanoi):
