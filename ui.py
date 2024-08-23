@@ -32,7 +32,7 @@ class Style:
     ENDC = "\033[0m"
 
     @staticmethod
-    def set(message: str, style: str, inline = False):
+    def set(message: str, style: str, inline=False):
         stylized_message = style + message + Style.ENDC
         if inline:
             return stylized_message
@@ -58,10 +58,10 @@ class Command(CommandList):
         return self.command.lower()
 
     def input(self):
-        self.command = input(f"{Style.set("  insert command:  ", Style.HIGHLIGHT)} ")
+        self.command = input(f"{Style.set('  insert command:  ', Style.HIGHLIGHT)} ")
 
     def is_not_valid(self) -> bool:
-        return self.command and self.command not in self.whitelist
+        return self.command != "" and self.command not in self.whitelist
 
 
 class UI:
@@ -71,19 +71,26 @@ class UI:
     def __init__(self, hanoi: Hanoi, title: str = __title) -> None:
         stylized_title = Style.set(title, Style.BOLD + Style.HEADER)
         stylized_copyright = Style.set(self.__copyright, Style.COPY, inline=True)
-        center_space = Layout.LINE_WIDTH - 2*Layout.X_PADDING - len(title) - len(self.__copyright)
+        center_space = (
+            Layout.LINE_WIDTH
+            - 2 * Layout.X_PADDING
+            - len(title)
+            - len(self.__copyright)
+        )
         self.hanoi = hanoi
         self.header = stylized_title + center_space * " " + stylized_copyright
         self.command = Command()
 
     def render(self, show_hanoi: bool = True):
         system("clear")
-        print(Layout.Y_PADDING * '\n')
+        print(Layout.Y_PADDING * "\n")
         print(self.header)
         if show_hanoi:
             print(f"\n{self.hanoi}\n")
 
-    def run(self, action: Callable[[str, Hanoi], tuple[int, IndexError | ValueError | None]]):
+    def run(
+        self, action: Callable[[str, Hanoi], tuple[int, IndexError | ValueError | None]]
+    ):
         while self.command.get() not in self.command.quitting_commands:
             result, error = action(self.command.get(), self.hanoi)
             self.render()
@@ -94,4 +101,4 @@ class UI:
             elif result == 1:
                 print(Style.set(f"ERROR: {error}!\n", Style.FAIL))
             self.command.input()
-        system('clear')
+        system("clear")
