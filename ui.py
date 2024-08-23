@@ -83,7 +83,7 @@ class UI:
         if show_hanoi:
             print(f"\n{self.hanoi}\n")
 
-    def run(self, action: Callable[[str, Hanoi], tuple[int, IndexError | None]]):
+    def run(self, action: Callable[[str, Hanoi], tuple[int, IndexError | ValueError | None]]):
         while self.command.get() not in self.command.quitting_commands:
             result, error = action(self.command.get(), self.hanoi)
             self.render()
