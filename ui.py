@@ -5,6 +5,14 @@ from hanoi import Hanoi
 
 
 @dataclass(frozen=True)
+class Layout:
+    LINE_WIDTH = 85
+    NUMBER_OF_LINES = 24
+    X_PADDING = 7
+    Y_PADDING = 3
+
+
+@dataclass(frozen=True)
 class Style:
     HEADER = "\033[95m"
     COPY = "\033[36m"
@@ -13,18 +21,17 @@ class Style:
     OKGREEN = "\033[92m"
     WARNING = "\033[93m"
     FAIL = "\033[91m"
-    ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
     HIGHLIGHT = "\033[44m"
+    ENDC = "\033[0m"
 
     @staticmethod
     def set(message: str, style: str, inline = False):
-        left_padding = '       '
         stylized_message = style + message + Style.ENDC
         if inline:
             return stylized_message
-        return left_padding + stylized_message
+        return Layout.X_PADDING * " " + stylized_message
 
 
 @dataclass(frozen=True)
@@ -53,19 +60,21 @@ class Command(CommandList):
 
 
 class UI:
-    __default_title = "------- TOWER OF HANOI -------"
+    __title = "------- TOWER OF HANOI -------"
     __copyright = "©Giorgio Scattareggia"
-    __center_space = "                    "
 
-    def __init__(self, hanoi: Hanoi, title: str = __default_title) -> None:
+    def __init__(self, hanoi: Hanoi, title: str = __title) -> None:
+        stylized_title = Style.set(title, Style.BOLD + Style.HEADER)
+        stylized_copyright = Style.set(self.__copyright, Style.COPY, inline=True)
+        center_space = Layout.LINE_WIDTH - 2*Layout.X_PADDING - len(title) - len(self.__copyright)
         self.hanoi = hanoi
-        self.title = title + self.__center_space + Style.set(self.__copyright, Style.COPY, True)
+        self.header = stylized_title + center_space * " " + stylized_copyright
         self.command = Command()
 
     def render(self, show_hanoi: bool = True):
         system("clear")
-        print('\n\n\n')
-        print(Style.set(self.title, Style.BOLD + Style.HEADER))
+        print(Layout.Y_PADDING * '\n')
+        print(self.header)
         if show_hanoi:
             print(f"\n{self.hanoi}\n")
 
