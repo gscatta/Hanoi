@@ -8,10 +8,8 @@ ItemT = TypeVar("ItemT")
 class Token(Generic[ItemT]):
     item: ItemT | None
     predecessor: Self
-    __pointer: Self
 
     def __init__(self, item: ItemT | None = None, predecessor: Self | None = None):
-        self.__pointer = self
         self.item = item
         if predecessor is None:
             self.predecessor = self
@@ -19,14 +17,21 @@ class Token(Generic[ItemT]):
             self.predecessor = predecessor
 
     def __iter__(self):
+        return TokenIterator(self)
+
+
+class TokenIterator(Generic[ItemT]):
+    def __init__(self, token: Token[ItemT]) -> None:
+        self.pointer = token
+
+    def __iter__(self) -> Self:
         return self
 
     def __next__(self) -> ItemT:
-        if self.__pointer.item is None:
-            self.__pointer = self
+        if self.pointer.item is None:
             raise StopIteration
-        item = self.__pointer.item
-        self.__pointer = self.__pointer.predecessor
+        item = self.pointer.item
+        self.pointer = self.pointer.predecessor
         return item
 
 
@@ -55,12 +60,13 @@ class Stack(Generic[ItemT]):
         return item
 
     def __iter__(self) -> Token[ItemT]:
-        return self.__token
+        return iter(self.__token)
 
     def __repr__(self) -> str:
         if self.is_empty():
             return "]-("
-        representation = f"({next(iter(self))!r}]"
-        for item in self:
-            representation = f"({item!r}]-" + representation
-        return "]-" + representation
+        iterator = iter(self)
+        representation = f"{next(iterator)!r}]"
+        for item in iterator:
+            representation = f"{item!r}]-(" + representation
+        return "]-(" + representation
