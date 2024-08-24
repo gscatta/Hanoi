@@ -5,9 +5,7 @@ class Hanoi:
     def __init__(self, k: int) -> None:
         if k < 1:
             raise ValueError("init Hanoi Towers with less than 1 piece")
-        self.towers = (Stack[int](), Stack[int](), Stack[int]())
-        for i in range(k, 0, -1):
-            self.towers[0].append(i)
+        self.towers = (Stack(*range(k, 0, -1)), Stack[int](), Stack[int]())
 
     def move_piece(self, from_tower: int, to_tower: int) -> None:
         if from_tower < 1 or from_tower > 3 or to_tower < 1 or to_tower > 3:

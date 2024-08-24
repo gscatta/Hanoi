@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Self, Generic, TypeVar
+from typing import Generic, Self, TypeVar
 
 ItemT = TypeVar("ItemT")
 
@@ -16,11 +16,8 @@ class Token(Generic[ItemT]):
         else:
             self.predecessor = predecessor
 
-    def __iter__(self):
-        return TokenIterator(self)
 
-
-class TokenIterator(Generic[ItemT]):
+class StackIterator(Generic[ItemT]):
     def __init__(self, token: Token[ItemT]) -> None:
         self.pointer = token
 
@@ -36,12 +33,12 @@ class TokenIterator(Generic[ItemT]):
 
 
 class Stack(Generic[ItemT]):
-    def __init__(self, item: ItemT | None = None) -> None:
+    def __init__(self, *items: ItemT) -> None:
         self.__token = Token[ItemT]()
-        if item is not None:
+        for item in items:
             self.append(item)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return self.__token.item is None
 
     def get(self) -> ItemT:
@@ -59,14 +56,13 @@ class Stack(Generic[ItemT]):
         self.__token = self.__token.predecessor
         return item
 
-    def __iter__(self) -> Token[ItemT]:
-        return iter(self.__token)
+    def __iter__(self) -> StackIterator[ItemT]:
+        return StackIterator(self.__token)
 
     def __repr__(self) -> str:
         if self.is_empty():
             return "]-("
-        iterator = iter(self)
-        representation = f"{next(iterator)!r}]"
-        for item in iterator:
-            representation = f"{item!r}]-(" + representation
-        return "]-(" + representation
+        representation = "]"
+        for item in self:
+            representation = f"]-({item!r}" + representation
+        return representation
