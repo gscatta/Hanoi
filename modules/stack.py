@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Generic, Self
 from .types.types import ItemT
 from .token import Token
