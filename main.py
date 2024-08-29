@@ -1,5 +1,5 @@
-from hanoi import Hanoi
-from ui import Command, UI
+from modules.hanoi import Hanoi
+from modules.ui import Command, UI
 
 
 def action(command: str, hanoi: Hanoi):

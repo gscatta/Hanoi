@@ -10,7 +10,7 @@ class Help:
 
     @staticmethod
     def get_help():
-        from ui import Layout, Style
+        from modules.ui import Layout, Style
 
         help_string = Style.set(Help.HEADER, Style.COPY + Style.BOLD) + "\n"
         help_string += Layout.px(Help.MOVE) + "\n"

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from os import system
 from typing import Callable
-from hanoi import Hanoi
-from help import Help
+from .hanoi import Hanoi
+from .help import Help
 
 
 @dataclass(frozen=True)
